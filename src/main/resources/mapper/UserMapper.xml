@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace属性：用于指定当前的映射文件和哪个接口进行映射，需要指定接口的路径，需要标注包的完整路径结构-->
+<mapper namespace="com.cy.store.mapper.UserMapper">
+    <!--自定义映射规则：resultMap标签来完成规则映射的定义-->
+    <!--
+        id属性：表示给这个映射规则分配唯一的id值，对应resultMap=“id属性的值”属性的取值
+        type属性：取值是一个类，表示数据库中的查询结果与Java中哪一个实体类进行结果集的映射
+    -->
+    <resultMap id="UserEntityMap" type="com.cy.store.entity.User">
+        <!--将表的资源和类的属性不一致的字段进行匹配指定，名称一致的字段可省略不写,主键不可以省略-->
+        <id column="uid" property="uid"></id>
+        <result column="is_delete" property="isDelete"></result>
+        <result column="created_user" property="createdUser"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="modified_user" property="modifiedUser"></result>
+        <result column="modified_time" property="modifiedTime"></result>
+    </resultMap>
+
+    <!--id属性：映射接口中方法的名称，直接在标签内部编写SQL语句-->
+    <!--
+        useGeneratedKeys属性：表示开启某个字段的值递增（主键设置为递增）
+        keyProperty属性：表示将表中的哪个字段作为主键进行递增
+    -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="uid">
+        INSERT INTO t_user (username, password, salt, phone, email, gender, avatar, is_delete,
+                            created_user, created_time, modified_user, modified_time)
+        VALUES (#{username}, #{password}, #{salt}, #{phone}, #{email}, #{gender}, #{avatar}, #{isDelete},
+                #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    </insert>
+
+    <!--select语句在执行时，查询结果是一个对象或多个对象-->
+    <!--
+        resultType:表示查询结果集类型，只需要指定对应映射类的类型，并且包含完整包接口
+        resultMap:当表的字段和类的对象属性字段名称不一致时，自定义查询结果集的映射规则
+    -->
+    <select id="findByUsername" resultMap="UserEntityMap">
+        SELECT * FROM t_user WHERE username = #{username}
+    </select>
+</mapper>
