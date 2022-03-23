@@ -143,5 +143,29 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
+
+		<script type="text/javascript">
+			$("#btn-login").click(function () {
+				$.ajax({
+					url: "/users/login",
+					type: "POST",
+					data: $("#form-login").serialize(),
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							alert("登录成功");
+							// 跳转到系统的主页index.html
+							// 相对路径来确定跳转的页面
+							location.href = "index.html";
+						} else {
+							alert("登录失败" + json.message);
+						}
+					},
+					error: function (xhr) {
+						alert("登录时产生未知的异常" + xhr.status);
+					}
+				});
+			});
+		</script>
 	</body>
 </html>

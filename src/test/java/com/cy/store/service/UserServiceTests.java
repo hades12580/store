@@ -37,7 +37,7 @@ public class UserServiceTests {
 
         try {
             User user = new User();
-            user.setUsername("Black");
+            user.setUsername("test003");
             user.setPassword("123");
             userService.reg(user);
             System.out.println("OK");
@@ -49,4 +49,14 @@ public class UserServiceTests {
         }
     }
 
+    @Test
+    public void login() {
+        User user = userService.login("test001", "123456");
+        System.out.println(user);
+    }
+
+    @Test
+    public void changePassword() {
+        userService.changePassword(11, "管理员", "123", "321");
+    }
 }
