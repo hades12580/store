@@ -227,3 +227,70 @@ JsonResult<Void>
 #### 3.3 处理请求
 ### 4 修改密码-前端控制
 * password.html中添加ajax请求处理，不再手动编写ajax结构，直接复制，然后再微调修改参数即可
+
+## 个人资料
+### 1 个人资料-持久层
+#### 1.1 需要规划SQL语句
+* 更新用户信息的SQL语句
+```mysql
+update t_user set phone=?, email=?, gender=?, modified_user=?, modified_time=? where uid=?
+```
+* 根据用户名查询用户的数据(查询用户数据不需要再重复开发)
+```mysql
+select * from t_user where uid=?
+```
+#### 1.2 接口与抽象方法
+* 更新用户信息方法的定义。
+#### 1.3 抽象方法的映射
+* 在UserMapper.xml文件中进行方法的映射编写。
+* 在测试类中完成功能的测试
+### 2 个人资料-业务层
+#### 2.1 异常规划
+* 设计两个功能：
+  * 当打开页面时获取用户信息并填充到对应的文本框中。
+  * 检测用户是否点击了修改按钮，如果检测到则执行修改用户信息的操作。
+* 打开页面时可能找不到用户数据、点击删除按钮之前需要再次检测用户数据是否存在
+#### 2.2 接口和抽象方法
+* 主要有两个功能的模块，对应的是两个抽象方法的设计。
+```
+/**
+ * 根据用户的id查询用户数据
+ * @param uid 用户id
+ * @return 用户的数据
+ */
+User getByUid(Integer uid);
+
+/**
+ * 更新用户数据的操作
+ * @param uid 用户id
+ * @param username 用户名称
+ * @param user 用户对象数据
+ */
+void changeInfo(Integer uid, String username, User user);
+```
+#### 2.3 实现抽象方法
+* 在UserServiceImpl类中添加两个抽象方法的具体实现。
+* 在测试类中进行功能的单元测试。
+### 3 个人资料-控制层
+#### 3.1 处理异常
+* 暂无
+#### 3.2 设计请求
+* 设置-一打开页面就发送当前用户数据的查询。
+```
+/users/get_by_uid
+GET
+HttpSession session
+JsonResult<User>
+```
+* 点击修改按钮发送用户数据的修改操作请求的设计。
+```
+/users/change_info
+POST
+User user, HttpSession session
+JsonResult<Void>
+```
+#### 3.3 处理请求
+* 将上述两个设计在控制层进行编写
+### 4 个人资料-前端页面
+* 在打开userdata.html页面自动发送ajax请求，查询到的数据填充到页面上。
+* 在检测到用户点击修改按钮后发送一个ajax请求。

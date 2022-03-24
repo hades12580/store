@@ -40,23 +40,37 @@ public class UserServiceTests {
             user.setUsername("test003");
             user.setPassword("123");
             userService.reg(user);
-            System.out.println("OK");
+            System.err.println("OK");
         } catch (ServiceException e) {
             // 获取类的对象，再获取类的名称
-            System.out.println(e.getClass().getSimpleName());
+            System.err.println(e.getClass().getSimpleName());
             // 获取异常的具体描述信息
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
     @Test
     public void login() {
         User user = userService.login("test001", "123456");
-        System.out.println(user);
+        System.err.println(user);
     }
 
     @Test
     public void changePassword() {
         userService.changePassword(11, "管理员", "123", "321");
+    }
+
+    @Test
+    public void getByUid() {
+        System.err.println(userService.getByUid(12));
+    }
+
+    @Test
+    public void changeInfo() {
+        User user = new User();
+        user.setPhone("1234567890");
+        user.setEmail("admin@qq.com");
+        user.setGender(0);
+        userService.changeInfo(12, "管理员", user);
     }
 }

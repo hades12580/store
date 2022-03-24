@@ -49,4 +49,11 @@ public interface UserMapper {
      * @return 匹配的用户数据，如果没有匹配的用户数据，则返回null
      */
     User findByUid(Integer uid);
+
+    /**
+     * 更新用户的数据信息
+     * @param user 用户数据
+     * @return 返回值为受影响的行数
+     */
+    Integer updateInfoByUid(User user);
 }
