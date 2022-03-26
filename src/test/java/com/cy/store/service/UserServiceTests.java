@@ -73,4 +73,9 @@ public class UserServiceTests {
         user.setGender(0);
         userService.changeInfo(12, "管理员", user);
     }
+
+    @Test
+    public void changeAvatar() {
+        userService.changeAvatar(13, "/upload/test.png", "admin");
+    }
 }

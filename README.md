@@ -9,11 +9,11 @@
 _通过MyBatis操作数据库，做MyBatis开发流程_
 #### 3.1 规划需要执行的SQL语句
 * 用户注册功能，相当于在做数据的插入操作：
-```mysql
+```
 insert into t_user (username, password) values (list)
 ```
 * 用户注册时首先要查询当前用户名是否存在，如果存在则不能进行注册。相当于查询语句
-```mysql
+```
 select * from t_user where username=？
 ```
 #### 3.2 设计接口和抽象方法
@@ -114,7 +114,7 @@ $.ajax({
 ### 1 登陆-持久层
 #### 1.1 规划需要执行的SQL语句
 * 依据用户提交的用户名和密码做select查询。密码的比较在业务层执行。
-```mysql
+```
 select * from t_user where username=?
 ```
 * 说明：如果在分析过程中发现某个功能模块已经被开发完成，就可以省略当前开发步骤，分析过程不能省略。
@@ -161,7 +161,7 @@ select * from t_user where username=?
   * 首先自定义一个类，用这个类实现HandlerInterceptor接口。
   * 注册过滤器：添加白名单(可以在不登录情况下访问的资源：register\login\reg\index\product.html)、添加黑名单(在用户登录的状态下才能访问的资源)。
   * 注册过滤技术：借助WebMvcConfigure接口，可以将用户定义的拦截器进行注册，才可以保证拦截器能够生效和使用。定义一个类，然后让这个类实现WebMvcConfigure接口。配置信息，建议存放在项目的config包结构下。
-  ```java
+  ```
   // 将自定义的拦截器进行注册
   default void addInterceptors(InterceptorRegistry registry) {
     }
@@ -188,11 +188,11 @@ select * from t_user where username=?
 ### 1 修改密码-持久层
 #### 1.1 规划需要执行的SQL语句
 * 根据用户的uid修改用户的password值。
-```mysql
+```
 update t_user set password=?,modified_user=?,modified_time=? where uid=?
 ```
 * 根据uid查询用户数据。在修改密码之前，要保证用户的数据存在、检测是否被标记未删除、检测输入的原始密码是否正确。
-```mysql
+```
 select * from t_user where uid=?
 ```
 #### 1.2 设计接口和抽象方法
@@ -206,7 +206,7 @@ select * from t_user where uid=?
 * update在更新时，有可能产生未知的异常-->UpdateException
 #### 2.2 设计接口和抽象方法
 * 执行用户修改密码的核心方法。
-```java
+```
 void changePassword(Integer uid,
                         String username,
                         String oldPassword,
@@ -232,11 +232,11 @@ JsonResult<Void>
 ### 1 个人资料-持久层
 #### 1.1 需要规划SQL语句
 * 更新用户信息的SQL语句
-```mysql
+```
 update t_user set phone=?, email=?, gender=?, modified_user=?, modified_time=? where uid=?
 ```
 * 根据用户名查询用户的数据(查询用户数据不需要再重复开发)
-```mysql
+```
 select * from t_user where uid=?
 ```
 #### 1.2 接口与抽象方法
@@ -294,3 +294,69 @@ JsonResult<Void>
 ### 4 个人资料-前端页面
 * 在打开userdata.html页面自动发送ajax请求，查询到的数据填充到页面上。
 * 在检测到用户点击修改按钮后发送一个ajax请求。
+
+## 上传头像
+### 1 上传头像-持久层
+#### 1.1 规划SQL语句
+* 将对象文件保存在操作系统上，然后把这个文件的路径记录下来，因为记录路径非常方便，可以依据路径去找这个文件，在数据库中保存这个文件路径即可。将所有静态资源(图片、文件、其他资源文件)放在某台电脑上，作为单独的服务器使用。-对应的是一个更新用户avatar字段的SQL语句
+```
+update t_user set avatar=?, modified_user=?, modified_time=? where uid=?
+```
+#### 1.2 设计接口与抽象方法
+* UserMapper接口中定义抽象方法用于修改用户头像
+#### 1.3 抽象方法的映射
+* UserMapper.xml文件中编写映射的SQL语句
+* 在测试类中编写测试方法
+### 2 上传头像-业务层
+#### 2.1 规划异常
+* ~~用户数据不存在，找不到对应用户的数据~~
+* ~~更新数据时，各种未知异常的产生~~
+* _无需重复开发_
+#### 2.2 设计接口和抽象方法
+#### 2.3 实现抽象方法
+* 编写业务层更新用户头像的方法
+* 测试业务层方法执行
+### 3 上传头像-控制层
+#### 3.1 规划异常
+```
+文件异常的父类：
+  FileUploadException泛指文件上传的异常-作为父类继承RuntimeException
+  
+父类是FileUploadException：
+  FileEmptyException 文件为空的异常
+  FileSizeException 文件大小超出异常
+  FileTypeException 文件类型异常
+  FileUploadIOException 文件读写的异常
+  FileStateException 文件状态的异常
+```
+* 五个构造方法显式的声明出来，再去继承相关的父类。
+#### 3.2 处理异常
+* 在基类BaseController类中进行编写和统一处理。
+```
+else if (e instanceof FileEmptyException) {
+    result.setState(6000);
+} else if (e instanceof FileSizeException) {
+    result.setState(6001);
+} else if (e instanceof FileTypeException) {
+    result.setState(6002);
+} else if (e instanceof FileStateException) {
+    result.setState(6003);
+} else if (e instanceof FileUploadIOException) {
+    result.setState(6004);
+}
+```
+* 在异常统一处理方法的参数列表上增加新的异常处理作为它的参数
+```
+@ExceptionHandler({ServiceException.class, FileUploadException.class})
+```
+#### 3.3 设计请求
+```
+/users/change_avatar
+POST (GET请求提交数据2KB，太小，提交不了图片)
+HttpSession session, MultipartFile file
+JsonResult<String> 
+```
+#### 3.4 实现请求
+### 4 上传头像-前端页面
+* 在upload页面中编写上传头像的代码
+  * 说明：如果直接使用表单进行上传，需要给表单显式的添加一个属性enctype="multipart/form-data"声明出来，不会将目标文件的数据格式做修改再上传，不同于字符串。

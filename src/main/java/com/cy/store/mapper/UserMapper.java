@@ -56,4 +56,21 @@ public interface UserMapper {
      * @return 返回值为受影响的行数
      */
     Integer updateInfoByUid(User user);
+
+    /**
+     * @Param("SQL映射文件中#{}占位符的变量名"):-当SQL语句的占位符和映射的几口方法参数名不一致时，
+     * 需要将某个参数强行注入到某个占位符变量上时，可以使用@Param()来标注映射的关系
+     * 根据用户uid修改用户头像
+     * @param uid 用户uid
+     * @param avatar 头像
+     * @param modifiedUser 最后修改执行人
+     * @param modifiedTime 最后修改时间
+     * @return 受影响的行数
+     */
+    Integer updateAvatarByUid(
+            @Param("uid") Integer uid,
+            @Param("avatar") String avatar,
+            @Param("modifiedUser") String modifiedUser,
+            @Param("modifiedTime") Date modifiedTime
+    );
 }
