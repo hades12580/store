@@ -111,6 +111,7 @@ public class UserServiceImpl implements IUserService {
         // 将查询结果中的uid、username、avatar封装到新的user对象中
         user.setUid(result.getUid());
         user.setUsername(result.getUsername());
+        // 返回有用户的头像
         user.setAvatar(result.getAvatar());
         // 返回新的user对象
         return user;

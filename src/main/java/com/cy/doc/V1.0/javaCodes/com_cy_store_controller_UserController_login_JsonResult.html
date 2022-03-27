@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JsonResult</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/google-code-prettify@1.0.5/bin/prettify.min.css">
+<link href="../style.css" rel="stylesheet" />
+</head>
+<body onload="PR.prettyPrint()">
+<pre class="prettyprint lang-java">
+public class JsonResult implements Serializable{
+
+    private int state; //状态码
+    private String message; //描述信息
+    private User data; //数据
+
+    public int getState(){
+        return state;
+    }
+
+    public void setState(int state){
+        this.state = state;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public User getData(){
+        return data;
+    }
+
+    public void setData(User data){
+        this.data = data;
+    }
+
+}
+</pre>
+
+
+<pre class="prettyprint lang-java">
+public class User implements Serializable{
+
+    private String createdUser; //
+    private String createdTime; //
+    private String modifiedUser; //
+    private String modifiedTime; //
+    private int uid; //
+    private String username; //
+    private String password; //
+    private String salt; //
+    private String phone; //
+    private String email; //
+    private int gender; //
+    private String avatar; //
+    private int isDelete; //
+
+    public String getCreatedUser(){
+        return createdUser;
+    }
+
+    public void setCreatedUser(String createdUser){
+        this.createdUser = createdUser;
+    }
+
+    public String getCreatedTime(){
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime){
+        this.createdTime = createdTime;
+    }
+
+    public String getModifiedUser(){
+        return modifiedUser;
+    }
+
+    public void setModifiedUser(String modifiedUser){
+        this.modifiedUser = modifiedUser;
+    }
+
+    public String getModifiedTime(){
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(String modifiedTime){
+        this.modifiedTime = modifiedTime;
+    }
+
+    public int getUid(){
+        return uid;
+    }
+
+    public void setUid(int uid){
+        this.uid = uid;
+    }
+
+    public String getUsername(){
+        return username;
+    }
+
+    public void setUsername(String username){
+        this.username = username;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
+
+    public String getSalt(){
+        return salt;
+    }
+
+    public void setSalt(String salt){
+        this.salt = salt;
+    }
+
+    public String getPhone(){
+        return phone;
+    }
+
+    public void setPhone(String phone){
+        this.phone = phone;
+    }
+
+    public String getEmail(){
+        return email;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
+    }
+
+    public int getGender(){
+        return gender;
+    }
+
+    public void setGender(int gender){
+        this.gender = gender;
+    }
+
+    public String getAvatar(){
+        return avatar;
+    }
+
+    public void setAvatar(String avatar){
+        this.avatar = avatar;
+    }
+
+    public int getIsDelete(){
+        return isDelete;
+    }
+
+    public void setIsDelete(int isDelete){
+        this.isDelete = isDelete;
+    }
+
+}
+</pre>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/google-code-prettify@1.0.5/bin/prettify.min.js"></script>
+</body>
+</html>

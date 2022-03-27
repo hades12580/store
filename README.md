@@ -360,3 +360,55 @@ JsonResult<String>
 ### 4 上传头像-前端页面
 * 在upload页面中编写上传头像的代码
   * 说明：如果直接使用表单进行上传，需要给表单显式的添加一个属性enctype="multipart/form-data"声明出来，不会将目标文件的数据格式做修改再上传，不同于字符串。
+### 5 解决Bug
+#### 5.1 更改默认大小限制
+* SpringMVC默认为1MB文件可以进行上传，手动去修改SpringMVC默认上传文件的大小。
+  * 方式1：直接在配置文件中进行配置。
+    * ```
+      spring.servlet.multipart.max-file-size=10MB
+      spring.servlet.multipart.max-request-size=15MB
+      ```
+  * 方式2：采用Java代码的形式设置文件上传大小的限制。主类中进行配置，定义一个方法，必须使用@Bean修饰符来修饰。在类的前面添加@Configuration注解修饰类。MultipartConfigElement类型。
+    * ```
+      @Bean
+      public MultipartConfigElement getMultipartConfigElement() {
+      // 创建一个配置的工厂类对象
+      MultipartConfigFactory factory = new MultipartConfigFactory();
+          // 设置需要创建对象的相关信息
+          factory.setMaxFileSize(DataSize.of(10, DataUnit.MEGABYTES));
+          factory.setMaxRequestSize(DataSize.of(15, DataUnit.MEGABYTES));
+          // 通过工厂类来创建MultipartConfigElement对象
+          return factory.createMultipartConfig();
+      }
+      ```
+#### 5.2 显示头像
+* 在页面中通过ajax请求来提交文件，提交完成后返回json串，解析出data中数据，设置到img头像标签的src属性上就可以了。
+  * serialize():可以将表单中的数据自动拼接成key=value的结构进行提交给服务器，一般提交都是普通的控件类型中的数据(text/password/radio/checkbox)等等
+  * FormData类:将表单中的数据保持原有的结构进行数据的提交。
+    * ```js
+      new FormData($("#form")[0]); // 文件类型的数据可以使用FormData对象进行存储
+      ```
+  * ajax默认处理数据时按照字符串的形式进行处理，以及默认会采用字符串的形式进行提交数据。关闭这两个默认的功能。
+    * ```
+      processData: false, // 处理数据的形式-false：关闭处理数据
+      contentType: false, // 提交数据的形式-false：关闭默认提交数据的形式
+      ```
+#### 5.3 登录后显示头像
+* 更新头像后，将服务器返回的头像路径保存在客户端的cookie对象中，每次检测到用户打开上传头像页面，在这个页面中通过ready()方法来自动监测去读取cookie中的头像并设置的src属性上。
+  * 1-设置cookie中的值
+    * ```js
+      // 导入cookie.js文件
+      <script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+      // 调用cookie方法：
+      $.cookie(key, value, time); //单位：天
+      ```
+  * 2-在upload.html页面先引入cookie.js文件
+    * ```js
+      <script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+      ```
+  * 3-在upload.html页面通过ready()自动读取cookie中的数据。
+#### 5.4 显示最新的头像
+* 在更改完头像后，将最新的头像地址，再次保存在cookie中，同名保存会覆盖原有cookie中的值。
+```js
+$.cookie("avatar", json.data, {expires: 7});
+```

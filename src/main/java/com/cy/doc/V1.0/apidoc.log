@@ -1,0 +1,30 @@
+三月 25, 2022 9:34:54 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: find java src paths:  [D:\JavaProject\store\src\main\java\]
+三月 25, 2022 9:34:54 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: project type not set, try to figure out...
+三月 25, 2022 9:34:54 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: start find controllers in path : D:\JavaProject\store\src\main\java\
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: find controller file : UserController.java
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: start to parse controller file : UserController.java
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils warn
+警告: warning!! Cannot find java file , in java file : D:\JavaProject\store\src\main\java\com\cy\store\controller\UserController.java, className : Void, we cannot found more information of it, you've better to make it a JavaBean
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils warn
+警告: warning!! Cannot find java file , in java file : D:\JavaProject\store\src\main\java\com\cy\store\controller\UserController.java, className : Void, we cannot found more information of it, you've better to make it a JavaBean
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils warn
+警告: warning!! Cannot find java file , in java file : D:\JavaProject\store\src\main\java\com\cy\store\controller\UserController.java, className : Void, we cannot found more information of it, you've better to make it a JavaBean
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: success to parse controller file : UserController.java
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: generate api docs start...
+三月 25, 2022 9:34:55 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: start to generate docs for controller file : D:\JavaProject\store\src\main\java\com\cy\store\controller\UserController.java
+三月 25, 2022 9:34:56 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: success to generate docs for controller file : D:\JavaProject\store\src\main\java\com\cy\store\controller\UserController.java
+三月 25, 2022 9:34:56 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: generate index start !!!
+三月 25, 2022 9:34:56 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: generate index done !!!
+三月 25, 2022 9:34:56 下午 io.github.yedaxia.apidocs.LogUtils info
+信息: info: generate api docs done !!!

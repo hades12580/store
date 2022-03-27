@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JsonResult</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/google-code-prettify@1.0.5/bin/prettify.min.css">
+<link href="../style.css" rel="stylesheet" />
+</head>
+<body onload="PR.prettyPrint()">
+<pre class="prettyprint lang-java">
+public class JsonResult implements Serializable{
+
+    private int state; //状态码
+    private String message; //描述信息
+    private Object data; //数据
+
+    public int getState(){
+        return state;
+    }
+
+    public void setState(int state){
+        this.state = state;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public Object getData(){
+        return data;
+    }
+
+    public void setData(Object data){
+        this.data = data;
+    }
+
+}
+</pre>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/google-code-prettify@1.0.5/bin/prettify.min.js"></script>
+</body>
+</html>
