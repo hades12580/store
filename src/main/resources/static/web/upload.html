@@ -245,9 +245,9 @@
 		<!--页脚结束-->
 		<script type="text/javascript">
 			$(document).ready(function () {
-				let avatar = $.cookie("avatar");
+				console.log("cookie中的avatar=" + $.cookie("avatar"));
 				// 将cookie中的值获取出来设置到头像的src属性上
-				$("#img-avatar").attr("src", avatar);
+				$("#img-avatar").attr("src", $.cookie("avatar"));
 			});
 
 			$("#btn-change-avatar").click(function () {
@@ -272,6 +272,7 @@
 					},
 					error: function (xhr) {
 						alert("修改头像时产生未知的异常" + xhr.message);
+						location.href = "login.html";
 					}
 				});
 			});

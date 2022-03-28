@@ -9,11 +9,11 @@
 _通过MyBatis操作数据库，做MyBatis开发流程_
 #### 3.1 规划需要执行的SQL语句
 * 用户注册功能，相当于在做数据的插入操作：
-```
+```mysql
 insert into t_user (username, password) values (list)
 ```
 * 用户注册时首先要查询当前用户名是否存在，如果存在则不能进行注册。相当于查询语句
-```
+```mysql
 select * from t_user where username=？
 ```
 #### 3.2 设计接口和抽象方法
@@ -114,7 +114,7 @@ $.ajax({
 ### 1 登陆-持久层
 #### 1.1 规划需要执行的SQL语句
 * 依据用户提交的用户名和密码做select查询。密码的比较在业务层执行。
-```
+```mysql
 select * from t_user where username=?
 ```
 * 说明：如果在分析过程中发现某个功能模块已经被开发完成，就可以省略当前开发步骤，分析过程不能省略。
@@ -188,11 +188,11 @@ select * from t_user where username=?
 ### 1 修改密码-持久层
 #### 1.1 规划需要执行的SQL语句
 * 根据用户的uid修改用户的password值。
-```
+```mysql
 update t_user set password=?,modified_user=?,modified_time=? where uid=?
 ```
 * 根据uid查询用户数据。在修改密码之前，要保证用户的数据存在、检测是否被标记未删除、检测输入的原始密码是否正确。
-```
+```mysql
 select * from t_user where uid=?
 ```
 #### 1.2 设计接口和抽象方法
@@ -236,7 +236,7 @@ JsonResult<Void>
 update t_user set phone=?, email=?, gender=?, modified_user=?, modified_time=? where uid=?
 ```
 * 根据用户名查询用户的数据(查询用户数据不需要再重复开发)
-```
+```mysql
 select * from t_user where uid=?
 ```
 #### 1.2 接口与抽象方法
@@ -299,7 +299,7 @@ JsonResult<Void>
 ### 1 上传头像-持久层
 #### 1.1 规划SQL语句
 * 将对象文件保存在操作系统上，然后把这个文件的路径记录下来，因为记录路径非常方便，可以依据路径去找这个文件，在数据库中保存这个文件路径即可。将所有静态资源(图片、文件、其他资源文件)放在某台电脑上，作为单独的服务器使用。-对应的是一个更新用户avatar字段的SQL语句
-```
+```mysql
 update t_user set avatar=?, modified_user=?, modified_time=? where uid=?
 ```
 #### 1.2 设计接口与抽象方法
@@ -412,3 +412,54 @@ JsonResult<String>
 ```js
 $.cookie("avatar", json.data, {expires: 7});
 ```
+## 新增收货地址
+### 1 新增收货地址-数据表的创建
+### 2 新增收货地址-创建实体类
+* 创建Address类，定义表的相关字段，采用驼峰命名方式，最后继承BaseEntity类。
+### 3 新增收货地址-持久层
+#### 3.1 各功能开发顺序
+* 当前收货地址功能模块：列表的展示、修改、删除、设置默认、新增收货地址。开发顺序：新增收货地址-列表的展示-设置默认收货地址-删除收货地址-修改收货地址。
+#### 3.2 规划需要执行的SOL语句
+* 1-插入语句：
+```
+insert into t_address (除了aid外字段列表) values (字段值列表)
+```
+* 2-一个用户的收货地址规定最多只能有20条数据对应，在插入用户数据之前先做查询操作。属于收货地址逻辑控制方面的一个异常。
+```mysql
+select count(*) from t_address where uid=?
+```
+#### 3.3 接口与抽象方法
+* 创建一个接口AddressMapper，在这个接口中定义上面两个SQL语句的抽象方法定义
+#### 3.4 配置SQL映射
+* 创建AddressMapper映射文件，在这个文件中添加抽象方法的SQL语句映射
+* 在test下的mapper文件下创建AddressMapperTests的测试类
+### 4 新增收货地址-业务层
+#### 4.1 规划异常
+* 如果用户是第一次插入用户的收货地址，规则：当用户插入的地址是第一条时，需要将当前地址作为默认的收货地址，如果查询的统计总数为0则将当前地址的is_default设置为1.查询统计结果为0不代表异常。
+* 查询的结果大于20，这时候需要抛出业务控制的异常AddressCountLimitException异常。自行创建这个异常。
+* 插入数据时产生未知的异常InsertException，不需要重复创建
+#### 4.2 接口与抽象方法
+* 创建IAddressService接口，在其中定义业务的抽象方法。
+* 创建AddressServiceImpl实现类，实现接口中的抽象方法。
+  * 在配置文件中定义数据
+   ```
+    # Spring读取配置文件中的数据:@Value("${user.address.max-count}")
+    user.address.max-count=20
+   ```
+  * 在实现类中实现业务控制
+* 测试业务层的功能是否正常。AddressServiceTests测试业务功能。
+#### 4.3 实现抽象方法
+### 5 新增收货地址-控制层
+#### 5.1 处理异常
+* 业务层抛出了收货地址总数超标的异常，在BaseController中进行处理。
+#### 5.2 设计请求
+```
+/addresses/add_new_address
+post
+Address address, HttpSession session
+JsonResult<Void>
+```
+#### 5.3 处理请求
+* 在控制层创建AddressController来处理用户收货地址的请求和响应。
+* * 先登录用户，再访问http://localhost:8080/addresses/add_new_address?name=tom&phone=11112341234进行测试。
+### 6 新增收货地址-前端页面
