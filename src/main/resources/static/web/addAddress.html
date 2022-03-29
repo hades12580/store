@@ -19,8 +19,8 @@
 		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
 		<link rel="stylesheet" type="text/css" href="../css/top.css" />
 		<link rel="stylesheet" type="text/css" href="../css/footer.css" />
-		<script type="text/javascript" src="../js/distpicker.data.js"></script>
-		<script type="text/javascript" src="../js/distpicker.js"></script>
+<!--		<script type="text/javascript" src="../js/distpicker.data.js"></script>-->
+<!--		<script type="text/javascript" src="../js/distpicker.js"></script>-->
 	</head>
 
 	<body>
@@ -150,17 +150,17 @@
 								<div class="form-group">
 									<label class="col-md-2 control-label"><span class="txtred">*</span>省/直辖市：</label>
 									<div class="col-md-3">
-										<select id="province-list" name="provinceName" class="form-control" data-province="---- 选择省 ----"></select>
+										<select id="province-list" name="provinceCode" class="form-control" data-province="---- 选择省 ----"></select>
 									</div>
 									<label class="col-md-2 control-label"><span class="txtred">*</span>城市：</label>
 									<div class="col-md-3">
-										<select id="city-list" name="cityName" class="form-control" data-city="---- 选择市 ----"></select>
+										<select id="city-list" name="cityCode" class="form-control" data-city="---- 选择市 ----"></select>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-md-2 control-label"><span class="txtred">*</span>区县：</label>
 									<div class="col-md-3">
-										<select id="area-list" name="areaName" class="form-control" data-district="---- 选择区 ----"></select>
+										<select id="area-list" name="areaCode" class="form-control" data-district="---- 选择区 ----"></select>
 									</div>
 									<label class="col-md-2 control-label">邮政编码：</label>
 									<div class="col-md-3">
@@ -288,6 +288,105 @@
 		</footer>
 		<!--页脚结束-->
 		<script type="text/javascript">
+			// value属性用于表示当前区域的code值
+			let defaultOption1 = "<option value='0'>---- 选择市 ----</option>";
+			let defaultOption2 = "<option value='0'>---- 选择区 ----</option>";
+			$(document).ready(function() {
+				showProvinceList();
+				// 设置默认的“请选择”的值，作为控件的默认值
+				$("#city-list").append(defaultOption1);
+				$("#area-list").append(defaultOption2);
+			});
+
+			/**
+			 * change()用于监听某个控件是否发生改变，一旦发生改变就会触发参数的函数
+			 * 需要传递一个function(){}
+			 */
+			$("#city-list").change(function () {
+				// 先获取行政区父代码
+				let parent = $("#city-list").val();
+				// 表示清空select下拉列表中的所有option元素
+				$("#area-list").empty();
+				// 填充默认值-选择市/区
+				$("#area-list").append(defaultOption2);
+
+				if (parent == 0) {
+					return;
+				}
+
+				$.ajax({
+					url: "/districts",
+					type: "POST",
+					data: "parent=" + parent,
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							let list = json.data;
+							for (let i = 0; i < list.length; i++) {
+								let opt = "<option value='"+list[i].code+"'>"+list[i].name+"</option>";
+								$("#area-list").append(opt);
+							}
+						} else {
+							alert("区县信息加载失败");
+						}
+					}
+				});
+			});
+
+			$("#province-list").change(function () {
+				// 先获取行政区父代码
+				let parent = $("#province-list").val();
+				// 表示清空select下拉列表中的所有option元素
+				$("#city-list").empty();
+				$("#area-list").empty();
+				// 填充默认值-选择市/区
+				$("#city-list").append(defaultOption1);
+				$("#area-list").append(defaultOption2);
+
+				if (parent == 0) {
+					return;
+				}
+
+				$.ajax({
+					url: "/districts",
+					type: "POST",
+					data: "parent=" + parent,
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							let list = json.data;
+							for (let i = 0; i < list.length; i++) {
+								let opt = "<option value='"+list[i].code+"'>"+list[i].name+"</option>";
+								$("#city-list").append(opt);
+							}
+						} else {
+							alert("城市信息加载失败");
+						}
+					}
+				});
+			});
+
+			/** 省的下拉列表数据展示 */
+			function showProvinceList() {
+				$.ajax({
+					url: "/districts",
+					type: "POST",
+					data: "parent=86",
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							let list = json.data;
+							for (let i = 0; i < list.length; i++) {
+								let opt = "<option value='"+list[i].code+"'>"+list[i].name+"</option>";
+								$("#province-list").append(opt);
+							}
+						} else {
+							alert("省/直辖区信息加载失败");
+						}
+					}
+				});
+			}
+
 			// 1.监听注册按钮是否被点击，如果被点击可以执行一个方法
 			$("#btn-add-new-address").click(function() {
 				$.ajax({

@@ -10,11 +10,11 @@ _通过MyBatis操作数据库，做MyBatis开发流程_
 #### 3.1 规划需要执行的SQL语句
 * 用户注册功能，相当于在做数据的插入操作：
 ```mysql
-insert into t_user (username, password) values (list)
+insert into t_user (username, password) values (#{username},#{password})
 ```
 * 用户注册时首先要查询当前用户名是否存在，如果存在则不能进行注册。相当于查询语句
 ```mysql
-select * from t_user where username=？
+select * from t_user where username=#{username}
 ```
 #### 3.2 设计接口和抽象方法
 * 定义Mapper接口。在项目目录结构下首先创建一个mapper包，在这个包下再根据不同的功能模块创建mapper接口。创建一个UserMapper接口，在接口中定义两个SQL语句抽象方法。
@@ -115,7 +115,7 @@ $.ajax({
 #### 1.1 规划需要执行的SQL语句
 * 依据用户提交的用户名和密码做select查询。密码的比较在业务层执行。
 ```mysql
-select * from t_user where username=?
+select * from t_user where username=#{username}
 ```
 * 说明：如果在分析过程中发现某个功能模块已经被开发完成，就可以省略当前开发步骤，分析过程不能省略。
 #### 1.2 接口设计和方法
@@ -189,11 +189,11 @@ select * from t_user where username=?
 #### 1.1 规划需要执行的SQL语句
 * 根据用户的uid修改用户的password值。
 ```mysql
-update t_user set password=?,modified_user=?,modified_time=? where uid=?
+update t_user set password=#{password},modified_user=#{modifiedUser},modified_time=#{modifiedTime} where uid=#{uid}
 ```
 * 根据uid查询用户数据。在修改密码之前，要保证用户的数据存在、检测是否被标记未删除、检测输入的原始密码是否正确。
 ```mysql
-select * from t_user where uid=?
+select * from t_user where uid=#{uid}
 ```
 #### 1.2 设计接口和抽象方法
 * UserMapper接口，将以上的两个方法的抽象定义出来。将来映射到sql语句上。
@@ -237,7 +237,7 @@ update t_user set phone=?, email=?, gender=?, modified_user=?, modified_time=? w
 ```
 * 根据用户名查询用户的数据(查询用户数据不需要再重复开发)
 ```mysql
-select * from t_user where uid=?
+select * from t_user where uid=#{uid}
 ```
 #### 1.2 接口与抽象方法
 * 更新用户信息方法的定义。
@@ -300,7 +300,7 @@ JsonResult<Void>
 #### 1.1 规划SQL语句
 * 将对象文件保存在操作系统上，然后把这个文件的路径记录下来，因为记录路径非常方便，可以依据路径去找这个文件，在数据库中保存这个文件路径即可。将所有静态资源(图片、文件、其他资源文件)放在某台电脑上，作为单独的服务器使用。-对应的是一个更新用户avatar字段的SQL语句
 ```mysql
-update t_user set avatar=?, modified_user=?, modified_time=? where uid=?
+update t_user set avatar=#{avatar}, modified_user=#{modifiedUser}, modified_time=#{modifiedTime} where uid=#{uid}
 ```
 #### 1.2 设计接口与抽象方法
 * UserMapper接口中定义抽象方法用于修改用户头像
@@ -426,7 +426,7 @@ insert into t_address (除了aid外字段列表) values (字段值列表)
 ```
 * 2-一个用户的收货地址规定最多只能有20条数据对应，在插入用户数据之前先做查询操作。属于收货地址逻辑控制方面的一个异常。
 ```mysql
-select count(*) from t_address where uid=?
+select count(*) from t_address where uid=#{uid}
 ```
 #### 3.3 接口与抽象方法
 * 创建一个接口AddressMapper，在这个接口中定义上面两个SQL语句的抽象方法定义
@@ -463,3 +463,70 @@ JsonResult<Void>
 * 在控制层创建AddressController来处理用户收货地址的请求和响应。
 * * 先登录用户，再访问http://localhost:8080/addresses/add_new_address?name=tom&phone=11112341234进行测试。
 ### 6 新增收货地址-前端页面
+
+## 获取省市区列表
+### 1 获取省市区列表-数据库
+```mysql
+CREATE TABLE t_dict_district (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  parent varchar(6) DEFAULT NULL,
+  code varchar(6) DEFAULT NULL,
+  name varchar(16) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+* parent表示父区域代码号，省的父代码号为+86
+### 2 获取省市区列表-实体类
+* 创建District实体类
+### 3 获取省市区列表-持久层
+* 查询语句，根据父代号进行查询。
+```mysql
+select * from t_dict_district where parent=#{parent} order by code ASC
+```
+* 抽象方法定义：DistrictMapper接口
+### 4 获取省市区列表-业务层
+* 创建IDistrictService接口并定义抽象方法
+* 创建DistrictServiceImpl实现类，实现抽象方法。
+* 单元测试。
+### 5 获取省市区列表-控制层
+#### 5.1 设计请求
+```
+/districts/
+GET
+String parent
+JsonResult<List<District>>
+```
+#### 5.2 处理请求
+* 创建DistrictController类，在类中编写处理请求的方法。
+* 该请求添加到白名单中
+* 直接请求服务器，访问localhost:8080/districts?parent=86/，进行测试
+### 6 获取省市区列表-前端页面
+* 注释掉通过js来完成省市区列表加载的js代码。
+```
+<!--
+<script type="text/javascript" src="../js/distpicker.data.js"></script>
+<script type="text/javascript" src="../js/distpicker.js"></script>
+-->
+```
+* 检查前端页面在提交省市区数据时是否有相关的name属性和id属性。
+* 运行前端页面看是否可以正常保存数据(除省市区之外)。
+## 获取省市区的名称
+### 1 获取省市区的名称-持久层
+* 规划根据当前的code来获取当前省市区的名称，对应查询SQL语句。
+```mysql
+select * from t_dict_district where code=#{code};
+```
+* 在DistrictMapper接口中定义出来。
+* 在DistrictMapper.xml文件中添加抽象方法的映射
+* 单元测试
+### 2 获取省市区的名称-业务层
+* 在业务层中没有异常需要处理。
+* 定义对应的业务层接口中的抽象方法。
+* 在实现类中进行实现。
+* 测试可以省略不写(超过8行代码进行独立测试)
+### 3 获取省市区的名称-业务层优化
+* 添加地址依赖于IDistrictService业务层。
+* 在addNewAddress方法中将districtService接口中获取到的省市区数据转移到address对象中，该对象包含所有用户收货地址的数据。
+### 4 获取省市区的名称-前端页面
+* addAddress.html页面中编写对应的省市区展示及根据用户的不同选择来显示对应标签中的内容。
+* 编写相关事件的代码
