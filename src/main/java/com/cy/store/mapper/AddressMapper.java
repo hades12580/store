@@ -9,6 +9,8 @@ package com.cy.store.mapper;
 import com.cy.store.entity.Address;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /** 收货地址持久层的接口 */
 @Mapper
 public interface AddressMapper {
@@ -26,4 +28,11 @@ public interface AddressMapper {
      * @return 当前用户收货地址总数
      */
     Integer countByUid(Integer uid);
+
+    /**
+     * 根据用户id查询用户收货地址数据
+     * @param uid 用户id
+     * @return 收货地址数据
+     */
+    List<Address> findByUid(Integer uid);
 }

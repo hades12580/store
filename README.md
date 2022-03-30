@@ -530,3 +530,41 @@ select * from t_dict_district where code=#{code};
 ### 4 获取省市区的名称-前端页面
 * addAddress.html页面中编写对应的省市区展示及根据用户的不同选择来显示对应标签中的内容。
 * 编写相关事件的代码
+## 收货地址列表展示
+### 1 收货地址列表展示-持久层
+#### 1.1 规划SQL语句
+* 数据库数据的查询操作
+```mysql
+select * from t_address where uid=#{uid} order by is_default DESC, created_time DESC
+```
+#### 1.2 接口和抽象方法
+```
+/**
+ * 根据用户id查询用户收货地址数据
+ * @param uid 用户id
+ * @return 收货地址数据
+ */
+List<Address> findByUid(Integer uid);
+```
+#### 1.3 在xml文件中添加SQL语句映射
+#### 1.4 单元测试
+### 2 收货地址列表展示-业务层
+* 此处不用抛出相关异常，无需进行异常的设计。
+* 设计业务层的接口和抽象方法
+```
+List<Address> getByUid(Integer uid);
+```
+* 在实现类中实现此方法的逻辑
+* 单元测试-暂时省略
+### 3 收货地址列表展示-控制层
+* 请求设计
+```
+/addresses
+HttpSession session
+GET
+JsonResult<List<Address>>
+```
+* 实现请求方法的编写
+* 先登录，再访问请求的地址进行测试
+### 4 收货地址列表展示-前端页面
+* 在address.html页面中编写用户收货地址数据的展示列表。

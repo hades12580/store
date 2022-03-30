@@ -150,33 +150,33 @@
 								</tr>
 							</thead>
 							<tbody id="address-list">
-								<tr>
-									<td>家</td>
-									<td>八戒</td>
-									<td>北京市房山区高老庄3排6号</td>
-									<td>1380***1234</td>
-									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>
-									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
-									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>
-								</tr>
-								<tr>
-									<td>公司</td>
-									<td>八戒</td>
-									<td>北京市海淀区中关村中路1号1001室</td>
-									<td>1380***1234</td>
-									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>
-									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
-									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>
-								</tr>
-								<tr>
-									<td>宿舍</td>
-									<td>八戒</td>
-									<td>北京市海淀区永丰镇30号</td>
-									<td>1380***1234</td>
-									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>
-									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
-									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>
-								</tr>
+<!--								<tr>-->
+<!--									<td>家</td>-->
+<!--									<td>八戒</td>-->
+<!--									<td>北京市房山区高老庄3排6号</td>-->
+<!--									<td>1380***1234</td>-->
+<!--									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>-->
+<!--									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>-->
+<!--									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>-->
+<!--								</tr>-->
+<!--								<tr>-->
+<!--									<td>公司</td>-->
+<!--									<td>八戒</td>-->
+<!--									<td>北京市海淀区中关村中路1号1001室</td>-->
+<!--									<td>1380***1234</td>-->
+<!--									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>-->
+<!--									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>-->
+<!--									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>-->
+<!--								</tr>-->
+<!--								<tr>-->
+<!--									<td>宿舍</td>-->
+<!--									<td>八戒</td>-->
+<!--									<td>北京市海淀区永丰镇30号</td>-->
+<!--									<td>1380***1234</td>-->
+<!--									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>-->
+<!--									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>-->
+<!--									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>-->
+<!--								</tr>-->
 							</tbody>
 						</table>
 						<a href="addAddress.html" class="btn btn-sm btn-primary"><span class="fa fa-plus"></span>新增收货地址</a>
@@ -269,6 +269,50 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript">
+			$(document).ready(function () {
+				showAddressList();
+			});
+
+			/** 展示用户收货地址 */
+			function showAddressList() {
+				$.ajax({
+					url: "/addresses",
+					type: "POST",
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							let list = json.data;
+							for (let i = 0; i < list.length; i++) {
+								let tr = '<tr>\n' +
+										'<td>#{tag}</td>\n' +
+										'<td>#{name}</td>\n' +
+										'<td>#{address}</td>\n' +
+										'<td>#{phone}</td>\n' +
+										'<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>\n' +
+										'<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>\n' +
+										'<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>\n' +
+										'</tr>';
+								// 替换方式1：
+								tr = tr.replace(/#{tag}/g, list[i].tag);
+								tr = tr.replace(/#{name}/g, list[i].name);
+								// 替换方式2：
+								tr = tr.replace("#{address}", list[i].address);
+								let phone = list[i].phone;
+								phone = phone.substr(0, 3) + "****" + phone.substr(7, 11);
+								tr = tr.replace("#{phone}", phone);
+
+								$("#address-list").append(tr);
+							}
+							// 将某个元素隐藏使用hide()方法
+							$(".add-def:eq(0)").hide();
+						} else {
+							alert("用户收地址数据信息加载失败");
+						}
+					}
+				});
+			}
+		</script>
 	</body>
 
 </html>
