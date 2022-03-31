@@ -150,33 +150,33 @@
 								</tr>
 							</thead>
 							<tbody id="address-list">
-<!--								<tr>-->
-<!--									<td>家</td>-->
-<!--									<td>八戒</td>-->
-<!--									<td>北京市房山区高老庄3排6号</td>-->
-<!--									<td>1380***1234</td>-->
-<!--									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>-->
-<!--									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>-->
-<!--									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>-->
-<!--								</tr>-->
-<!--								<tr>-->
-<!--									<td>公司</td>-->
-<!--									<td>八戒</td>-->
-<!--									<td>北京市海淀区中关村中路1号1001室</td>-->
-<!--									<td>1380***1234</td>-->
-<!--									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>-->
-<!--									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>-->
-<!--									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>-->
-<!--								</tr>-->
-<!--								<tr>-->
-<!--									<td>宿舍</td>-->
-<!--									<td>八戒</td>-->
-<!--									<td>北京市海淀区永丰镇30号</td>-->
-<!--									<td>1380***1234</td>-->
-<!--									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>-->
-<!--									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>-->
-<!--									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>-->
-<!--								</tr>-->
+								<tr>
+									<td>家</td>
+									<td>八戒</td>
+									<td>北京市房山区高老庄3排6号</td>
+									<td>1380***1234</td>
+									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>
+									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
+									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>
+								</tr>
+								<tr>
+									<td>公司</td>
+									<td>八戒</td>
+									<td>北京市海淀区中关村中路1号1001室</td>
+									<td>1380***1234</td>
+									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>
+									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
+									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>
+								</tr>
+								<tr>
+									<td>宿舍</td>
+									<td>八戒</td>
+									<td>北京市海淀区永丰镇30号</td>
+									<td>1380***1234</td>
+									<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>
+									<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
+									<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>
+								</tr>
 							</tbody>
 						</table>
 						<a href="addAddress.html" class="btn btn-sm btn-primary"><span class="fa fa-plus"></span>新增收货地址</a>
@@ -276,6 +276,7 @@
 
 			/** 展示用户收货地址 */
 			function showAddressList() {
+				$("#address-list").empty();
 				$.ajax({
 					url: "/addresses",
 					type: "POST",
@@ -291,7 +292,7 @@
 										'<td>#{phone}</td>\n' +
 										'<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>\n' +
 										'<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>\n' +
-										'<td><a class="btn btn-xs add-def btn-default">设为默认</a></td>\n' +
+										'<td><a onclick="setDefault(#{aid})" class="btn btn-xs add-def btn-default">设为默认</a></td>\n' +
 										'</tr>';
 								// 替换方式1：
 								tr = tr.replace(/#{tag}/g, list[i].tag);
@@ -301,6 +302,7 @@
 								let phone = list[i].phone;
 								phone = phone.substr(0, 3) + "****" + phone.substr(7, 11);
 								tr = tr.replace("#{phone}", phone);
+								tr = tr.replace("#{aid}", list[i].aid);
 
 								$("#address-list").append(tr);
 							}
@@ -309,6 +311,25 @@
 						} else {
 							alert("用户收地址数据信息加载失败");
 						}
+					}
+				});
+			}
+
+			function setDefault(aid) {
+				$.ajax({
+					url: "/addresses/" + aid + "/set_default",
+					type: "POST",
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							// 重新加载收货地址列表页面
+							showAddressList();
+						} else {
+							alert("设置默认收货地址失败");
+						}
+					},
+					error: function (xhr) {
+						alert("设置默认收货地址时产生未知的异常" + xhr.message);
 					}
 				});
 			}

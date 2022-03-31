@@ -28,4 +28,9 @@ public class AddressServiceTests {
         address.setName("尼卡");
         addressService.addNewAddress(13, "管理员", address);
     }
+
+    @Test
+    public void setDefault() {
+        addressService.setDefault(4, 13, "艾尔登之王");
+    }
 }

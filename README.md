@@ -568,3 +568,54 @@ JsonResult<List<Address>>
 * 先登录，再访问请求的地址进行测试
 ### 4 收货地址列表展示-前端页面
 * 在address.html页面中编写用户收货地址数据的展示列表。
+
+## 设置默认收货地址 
+### 1 设置默认收货地址-持久层
+#### 1.1 规划SQL语句
+* 检测当前用户设置为默认收货地址的这条数据是否存在
+```mysql
+select * from t_address where aid=#{aid}
+```
+* 在修改用户默认收货地址之前，先将所有的收货地址设置为非默认。
+```mysql
+update t_address set is_default=0 where uid=#{uid}
+```
+* 将用户当前选中的记录设置为默认收货地址
+```mysql
+update t_address set is_default=1, modified_user=#{modeifiedUser}, modified_time=#{modifiedTime} where aid=#{aid}
+```
+#### 1.2 设计抽象方法
+* 在AddressMapper接口中来进行定义和声明。
+#### 1.3 配置SQL映射
+* 在AddressMapper.xml文件中进行配置
+* 单元测试
+### 2 设置默认收货地址-业务层
+#### 2.1 异常规划
+* 执行更新时产生未知的UpdateException异常。已经创建过了，无需重复编写
+* 访问的数据不是当前登录用户的收货地址数据，非法访问：AccessDeniedException。
+* 收货地址有可能不存在的异常：AddressNotFoundException异常。
+#### 2.2 抽象方法的设计
+* 在IAddressService接口中编写抽象方法
+#### 2.3 实现抽象方法
+* 在AddressServiceImpl类中进行开发和业务设计
+* 单元测试
+### 3 设置默认收货地址-控制层
+#### 3.1 处理异常
+* 在BaseController类中进行统一的处理。
+#### 3.2 设计请求
+```
+/addresses/{aid}/set_default
+@PathVariable("aid") Integer aid, HttpSession session
+GET
+JsonResult<Void>
+```
+#### 3.3 完成请求方法
+* 在AddressController类中编写请求处理方法。
+* 先登录再访问一个请求路径：localhost:8080/addresses/{aid}/set_default
+### 4 设置默认收货地址-前端页面 
+* 给设置默认收货地址按钮添加一个onclick属性，指向一个方法的调用，在这个方法中来完成ajax请求的方法。
+* ```
+  <td><a onclick="setDefault(#{aid}})" class="btn btn-xs add-def btn-default">设为默认</a></td>
+  ```
+* 在address.html页面点击"设置默认"按钮，来发送ajax请求。完成setDefault()方法的声明和定义。
+* 先登录再访问address.html页面进行测试
