@@ -292,7 +292,7 @@
 										+ '<td>#{phone}</td>'
 										+ '<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>'
 										+ '<td><a onclick="deleteByAid(#{aid})" class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>'
-										+ '<td><a onclick="setDefault(#{aid})" class="btn btn-xs add-def btn-default">设为默认</a></td>'
+										+ '<td><a onclick="setDefault(#{aid1})" class="btn btn-xs add-def btn-default">设为默认</a></td>'
 										+ '</tr>';
 								// 替换方式1：
 								tr = tr.replace(/#{tag}/g, list[i].tag);
@@ -303,6 +303,7 @@
 								phone = phone.substr(0, 3) + "****" + phone.substr(7, 11);
 								tr = tr.replace("#{phone}", phone);
 								tr = tr.replace("#{aid}", list[i].aid);
+								tr = tr.replace("#{aid1}", list[i].aid);
 
 								$("#address-list").append(tr);
 							}
@@ -335,9 +336,9 @@
 			}
 
 
-			function deleteByAid(aid) {
+			function deleteByAid(aid1) {
 				$.ajax({
-					url: "/addresses/" + aid + "/delete",
+					url: "/addresses/" + aid1 + "/delete",
 					type: "POST",
 					dataType: "JSON",
 					success: function (json) {
