@@ -23,4 +23,12 @@ public interface IAddressService {
      * @param username 表示修改执行的人
      */
     void setDefault(Integer aid, Integer uid, String username);
+
+    /**
+     * 删除用户选中的收货地址数据
+     * @param aid 收货地址id
+     * @param uid 用户id
+     * @param username 用户名
+     */
+    void delete(Integer aid, Integer uid, String username);
 }

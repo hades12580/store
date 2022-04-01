@@ -619,3 +619,47 @@ JsonResult<Void>
   ```
 * 在address.html页面点击"设置默认"按钮，来发送ajax请求。完成setDefault()方法的声明和定义。
 * 先登录再访问address.html页面进行测试
+
+## 删除收货地址
+### 1 删除收货地址-持久层
+#### 1.1 规划SQL语句
+* 在删除之前判断该数据是否存在，判断该地址数据的归属是否属于当前的用户。不用重复开发
+* 执行删除收货地址的信息
+```mysql
+delete from t_address where aid=#{aid}
+``` 
+* 如果用户删除的是默认收货地址，将剩下的地址中某一条设置为默认收货地址。规则可以自定义：取最新修改的收货地址作为默认收货地址(modified_time)
+```mysql
+select * from t_address where uid=#{uid} order by modified_time DESC limit 0,1
+``` 
+* 如果用户只有一条收货地址数据，删除后其他操作不用进行
+#### 1.2 设计抽象方法
+* 在AddressMapper接口中进行抽象方法的设计
+#### 1.3 映射SQL语句
+* 在AddressMapper.xml文件中进行映射。
+* 单元测试
+### 2 删除收货地址-业务层
+#### 2.1 规划异常
+* 在执行删除时可能会产生位置的删除异常，导致数据不能删除，则抛出DeleteException异常。
+#### 2.2 抽象方法设计
+* 在IAddressService接口中进行设计抽象方法。
+#### 2.3 实现抽象方法
+* 业务层方法设计和实现
+* 单元测试
+### 3 删除收货地址-控制层
+* 处理异常DeleteException类。
+* 设计请求处理：
+```
+/addresses/{aid}/delete
+POST
+Integer aid, HttpSession session
+JsonResult<Void>
+```
+* 编写请求处理方法的实现
+### 4 删除收货地址-前端页面
+* 在address.html页面中添加删除按钮的事件。
+```html
+'<td><a onclick="delete(#{aid}})" class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>
+```
+* 编写deleteByAid(aid)方法的实现。
+* 登录系统，再访问收货地址页面进行删除的数据测试。

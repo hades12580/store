@@ -285,15 +285,15 @@
 						if (json.state == 200) {
 							let list = json.data;
 							for (let i = 0; i < list.length; i++) {
-								let tr = '<tr>\n' +
-										'<td>#{tag}</td>\n' +
-										'<td>#{name}</td>\n' +
-										'<td>#{address}</td>\n' +
-										'<td>#{phone}</td>\n' +
-										'<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>\n' +
-										'<td><a class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>\n' +
-										'<td><a onclick="setDefault(#{aid})" class="btn btn-xs add-def btn-default">设为默认</a></td>\n' +
-										'</tr>';
+								let tr = '<tr>'
+										+ '<td>#{tag}</td>'
+										+ '<td>#{name}</td>'
+										+ '<td>#{address}</td>'
+										+ '<td>#{phone}</td>'
+										+ '<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>'
+										+ '<td><a onclick="deleteByAid(#{aid})" class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>'
+										+ '<td><a onclick="setDefault(#{aid})" class="btn btn-xs add-def btn-default">设为默认</a></td>'
+										+ '</tr>';
 								// 替换方式1：
 								tr = tr.replace(/#{tag}/g, list[i].tag);
 								tr = tr.replace(/#{name}/g, list[i].name);
@@ -330,6 +330,26 @@
 					},
 					error: function (xhr) {
 						alert("设置默认收货地址时产生未知的异常" + xhr.message);
+					}
+				});
+			}
+
+
+			function deleteByAid(aid) {
+				$.ajax({
+					url: "/addresses/" + aid + "/delete",
+					type: "POST",
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							// 重新加载收货地址列表页面
+							showAddressList();
+						} else {
+							alert("删除收货地址失败");
+						}
+					},
+					error: function (xhr) {
+						alert("删除收货地址时产生未知的异常" + xhr.message);
 					}
 				});
 			}

@@ -59,4 +59,14 @@ public class AddressMapperTests {
     public void updateDefaultByAid() {
         addressMapper.updateDefaultByAid(7, "刘强东", new Date());
     }
+
+    @Test
+    public void deleteByAid() {
+        addressMapper.deleteByAid(3);
+    }
+
+    @Test
+    public void findLastModified() {
+        System.out.println(addressMapper.findLastModified(13));
+    }
 }
