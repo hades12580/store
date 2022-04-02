@@ -282,13 +282,14 @@
 					type: "POST",
 					dataType: "JSON",
 					success: function (json) {
+						console.log(json.data);
 						if (json.state == 200) {
 							let list = json.data;
 							for (let i = 0; i < list.length; i++) {
 								let tr = '<tr>'
 										+ '<td>#{tag}</td>'
 										+ '<td>#{name}</td>'
-										+ '<td>#{address}</td>'
+										+ '<td>#{province}#{city}#{area}#{address}</td>'
 										+ '<td>#{phone}</td>'
 										+ '<td><a class="btn btn-xs btn-info"><span class="fa fa-edit"></span> 修改</a></td>'
 										+ '<td><a onclick="deleteByAid(#{aid})" class="btn btn-xs add-del btn-info"><span class="fa fa-trash-o"></span> 删除</a></td>'
@@ -298,6 +299,13 @@
 								tr = tr.replace(/#{tag}/g, list[i].tag);
 								tr = tr.replace(/#{name}/g, list[i].name);
 								// 替换方式2：
+								tr = tr.replace("#{province}", list[i].provinceName);
+								if (list[i].cityName ==="市辖区" || list[i].cityName=== "县") {
+									tr = tr.replace("#{city}", "");
+								} else {
+									tr = tr.replace("#{city}", list[i].cityName);
+								}
+								tr = tr.replace("#{area}", list[i].areaName);
 								tr = tr.replace("#{address}", list[i].address);
 								let phone = list[i].phone;
 								phone = phone.substr(0, 3) + "****" + phone.substr(7, 11);
