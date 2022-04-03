@@ -663,3 +663,196 @@ JsonResult<Void>
 ```
 * 编写deleteByAid(aid)方法的实现。
 * 登录系统，再访问收货地址页面进行删除的数据测试。
+
+## 商品热销排行
+### 1 商品热销排行-数据表的创建
+### 2 商品热销排行-创建实体类
+### 3 商品热销排行-持久层
+#### 3.1 规划SQL语句
+* 查询热销商品列表：
+```mysql
+select * from t_product where status=1 order by priority desc limit 0,4
+```
+#### 3.2 设计抽象方法
+#### 3.3 配置SQL映射
+### 4 商品热销排行-业务层
+#### 4.1 规划异常
+* 无异常
+#### 4.2 接口与抽象方法
+* 创建IProductService接口
+#### 4.3 实现抽象方法
+* 创建ProductServiceImpl实现类
+### 5 商品热销排行-控制层
+#### 5.1 处理异常
+* 无异常
+#### 5.2 设计请求
+* 设计用户提交的请求，并设计响应方式
+```
+请求路径：/products/hot_list
+请求参数：无
+请求方式：GET
+响应结果：JsonResult<List<Product>>
+是否拦截：否，需要将index.html和products/**添加到白名单
+```
+#### 5.3 处理请求
+* 创建ProductController
+* 在类中添加处理请求的getHotList()方法
+### 6 商品热销排行-前端页面
+
+## 显示商品详情
+### 1 商品-显示商品详情-持久层
+#### 1.1 规划需要执行的SQL语句
+* 根据商品id显示商品详情的SQL语句大致是。
+```mysql
+SELECT * FROM t_product WHERE id=#{id}
+```
+#### 1.2 接口与抽象方法
+* 在ProductMapper接口中添加抽象方法。
+```
+/**
+ * 根据商品id查询商品详情
+ * @param id 商品id
+ * @return 匹配的商品详情，如果没有匹配的数据则返回null
+ */
+Product findById(Integer id);
+```
+#### 1.3 配置SQL映射
+* 在ProductMapper.xml文件中配置findById(Integer id)方法的映射。
+```xml
+<!-- 根据商品id查询商品详情：Product findById(Integer id) -->
+<select id="findById" resultMap="ProductEntityMap">
+    SELECT * FROM t_product WHERE id=#{id}
+</select>
+```
+* 在ProductMapperTests测试类中添加测试方法。
+```
+@Test
+public void findById() {
+    Integer id = 10000017;
+    Product result = productMapper.findById(id);
+    System.out.println(result);
+}
+```
+### 2 商品-显示商品详情-业务层
+#### 2.1 规划异常
+* 如果商品数据不存在，应该抛出ProductNotFoundException，需要创建com.cy.store.service.ex.ProductNotFoundException异常。
+```java
+package com.cy.store.service.ex;
+/** 商品数据不存在的异常 */
+public class ProductNotFoundException extends ServiceException {
+    // Override Methods...
+}
+```
+#### 2.2 接口与抽象方法
+* 在业务层IProductService接口中添加findById(Integer id)抽象方法。
+```
+/**
+ * 根据商品id查询商品详情
+ * @param id 商品id
+ * @return 匹配的商品详情，如果没有匹配的数据则返回null
+ */
+Product findById(Integer id);
+```
+#### 2.3 实现抽象方法
+* 在ProductServiceImpl类中，实现接口中的findById(Integer id)抽象方法。
+```
+@Override
+public Product findById(Integer id) {
+    // 根据参数id调用私有方法执行查询，获取商品数据
+    Product product = productMapper.findById(id);
+    // 判断查询结果是否为null
+    if (product == null) {
+        // 是：抛出ProductNotFoundException
+        throw new ProductNotFoundException("尝试访问的商品数据不存在");
+    }
+    // 将查询结果中的部分属性设置为null
+    product.setPriority(null);
+    product.setCreatedUser(null);
+    product.setCreatedTime(null);
+    product.setModifiedUser(null);
+    product.setModifiedTime(null);
+    // 返回查询结果
+    return product;
+}
+```
+* 在ProductServiceTests测试类中编写测试方法。
+```
+@Test
+public void findById() {
+    try {
+        Integer id = 100000179;
+        Product result = productService.findById(id);
+        System.out.println(result);
+    } catch (ServiceException e) {
+        System.out.println(e.getClass().getSimpleName());
+        System.out.println(e.getMessage());
+    }
+}
+```
+### 3 商品-显示商品详情-控制器
+#### 3.1 处理异常
+* 在BaseController类中的handleException()方法中添加处理ProductNotFoundException的异常。
+```
+// ...
+else if (e instanceof ProductNotFoundException) {
+	result.setState(4006);
+}
+// ...
+```
+#### 3.2  设计请求
+* 设计用户提交的请求，并设计响应的方式。
+```
+请求路径：/products/{id}/details
+请求参数：@PathVariable("id") Integer id
+请求类型：GET
+响应结果：JsonResult<Product>
+```
+#### 3.3 处理请求
+* 在ProductController类中添加处理请求的getById()方法。
+```
+@GetMapping("{id}/details")
+public JsonResult<Product> getById(@PathVariable("id") Integer id) {
+    // 调用业务对象执行获取数据
+    Product data = productService.findById(id);
+    // 返回成功和数据
+    return new JsonResult<Product>(OK, data);
+}
+```
+* 完成后启动项目，直接访问http://localhost:8080/products/10000017/details进行测试。
+### 4 商品-显示商品详情-前端页面
+* 检查在product.html页面body标签内部的最后是否引入jquery-getUrlParam.js文件，如果引入无需重复引入。
+```
+<script type="text/javascript" src="../js/jquery-getUrlParam.js"></script>
+```
+* 在product.html页面中body标签内部的最后添加获取当前商品详情的代码。
+```
+<script type="text/javascript">
+let id = $.getUrlParam("id");
+console.log("id=" + id);
+$(document).ready(function() {
+    $.ajax({
+        url: "/products/" + id + "/details",
+        type: "GET",
+        dataType: "JSON",
+        success: function(json) {
+            if (json.state == 200) {
+                console.log("title=" + json.data.title);
+                $("#product-title").html(json.data.title);
+                $("#product-sell-point").html(json.data.sellPoint);
+                $("#product-price").html(json.data.price);
+
+                for (let i = 1; i <= 5; i++) {
+                    $("#product-image-" + i + "-big").attr("src", ".." + json.data.image + i + "_big.png");
+                    $("#product-image-" + i).attr("src", ".." + json.data.image + i + ".jpg");
+                }
+            } else if (json.state == 4006) { // 商品数据不存在的异常
+                location.href = "index.html";
+            } else {
+                alert("获取商品信息失败！" + json.message);
+            }
+        }
+    });
+});
+</script>
+```
+* 完成后启动项目，先访问http://localhost:8080/web/index.html页面，然后点击“热销排行”中的某个子项，将跳转到product.html商品详情页，观察页面是否加载的是当前的商品信息。
