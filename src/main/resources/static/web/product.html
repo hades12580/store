@@ -335,14 +335,13 @@
 					dataType: "JSON",
 					success: function(json) {
 						if (json.state == 200) {
-							alert("增加成功！");
+							alert("加入购物车成功！");
 						} else {
-							alert("增加失败！" + json.message);
+							alert("加入购物车失败！" + json.message);
 						}
 					},
 					error: function(xhr) {
-						alert("您的登录信息已经过期，请重新登录！HTTP响应码：" + xhr.status);
-						location.href = "login.html";
+						alert("加入购物车时产生未知的异常" + xhr.status);
 					}
 				});
 			});

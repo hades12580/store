@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace属性：用于指定当前的映射文件和哪个接口进行映射，需要指定接口的路径，需要标注包的完整路径结构-->
+<mapper namespace="com.cy.store.mapper.CartMapper">
+    <resultMap id="CartEntityMap" type="com.cy.store.entity.Cart">
+        <id column="cid" property="cid"/>
+        <result column="created_user" property="createdUser"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="modified_user" property="modifiedUser"/>
+        <result column="modified_time" property="modifiedTime"/>
+    </resultMap>
+
+    <!-- 插入购物车数据：Integer insert(Cart cart) -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="cid">
+        INSERT INTO t_cart (uid, pid, price, num, created_user, created_time, modified_user, modified_time)
+        VALUES (#{uid}, #{pid}, #{price}, #{num}, #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    </insert>
+
+    <!-- 修改购物车数据中商品的数量：
+         Integer updateNumByCid(
+            @Param("cid") Integer cid,
+            @Param("num") Integer num,
+            @Param("modifiedUser") String modifiedUser,
+            @Param("modifiedTime") Date modifiedTime) -->
+    <update id="updateNumByCid">
+        UPDATE
+            t_cart
+        SET
+            num=#{num},
+            modified_user=#{modifiedUser},
+            modified_time=#{modifiedTime}
+        WHERE
+            cid=#{cid}
+    </update>
+
+    <!-- 根据用户id和商品id查询购物车中的数据：
+         Cart findByUidAndPid(
+            @Param("uid") Integer uid,
+            @Param("pid") Integer pid) -->
+    <select id="findByUidAndPid" resultMap="CartEntityMap">
+        SELECT
+            *
+        FROM
+            t_cart
+        WHERE
+            uid=#{uid} AND pid=#{pid}
+    </select>
+</mapper>
