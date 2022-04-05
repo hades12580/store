@@ -272,6 +272,50 @@
 				showCartList();
 			});
 
+			function addNum(cid) {
+				$.ajax({
+					url: "/carts/" + cid + "/num/add",
+					type: "POST",
+					dataType: "JSON",
+					success: function(json) {
+						if (json.state = 200) {
+							$("#num-" + cid).val(json.data);
+							// 获取某个标签内部的内容
+							let price = $("#price-" + cid).html();
+							let totalPrice = price * json.data;
+							$("#total-price-" + cid).html(totalPrice);
+						} else {
+							alert("增加购物车商品数量失败" + json.message);
+						}
+					},
+					error: function (xhr) {
+						alert("增加购物车商品数量产生未知的异常！" + xhr.status);
+					}
+				});
+			}
+
+			function reduceNum(cid) {
+				$.ajax({
+					url: "/carts/" + cid + "/num/reduce",
+					type: "POST",
+					dataType: "JSON",
+					success: function(json) {
+						if (json.state = 200) {
+							$("#num-" + cid).val(json.data);
+							// 获取某个标签内部的内容
+							let price = $("#price-" + cid).html();
+							let totalPrice = price * json.data;
+							$("#total-price-" + cid).html(totalPrice);
+						} else {
+							alert("减少购物车商品数量失败" + json.message);
+						}
+					},
+					error: function (xhr) {
+						alert("减少购物车商品数量产生未知的异常！" + xhr.status);
+					}
+				});
+			}
+
 			function showCartList() {
 				$("#cart-list").empty();
 				$.ajax({
@@ -289,7 +333,7 @@
 									+ '<td>#{title}#{msg}</td>'
 									+ '<td>¥<span id="price-#{cid}">#{realPrice}</span></td>'
 									+ '<td>'
-									+ 	'<input type="button" value="-" class="num-btn" onclick="reduceNum(1)" />'
+									+ 	'<input type="button" value="-" class="num-btn" onclick="reduceNum(#{cid})" />'
 									+ 	'<input id="num-#{cid}" type="text" size="2" readonly="readonly" class="num-text" value="#{num}">'
 									+ 	'<input type="button" value="+" class="num-btn" onclick="addNum(#{cid})" />'
 									+ '</td>'

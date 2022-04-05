@@ -1619,7 +1619,7 @@ else if (e instanceof CartNotFoundException) {
 // ...
 ```
 #### 3.2 设计请求
-设计用户提交的请求，并设计响应的方式。
+* 设计用户提交的请求，并设计响应的方式。
 ```
 请求路径：/carts/{cid}/num/add
 请求参数：@PathVariable("cid") Integer cid, HttpSession session

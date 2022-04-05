@@ -5,6 +5,8 @@ import com.cy.store.entity.Product;
 import com.cy.store.mapper.CartMapper;
 import com.cy.store.service.ICartService;
 import com.cy.store.service.IProductService;
+import com.cy.store.service.ex.AccessDeniedException;
+import com.cy.store.service.ex.CartNotFoundException;
 import com.cy.store.service.ex.InsertException;
 import com.cy.store.vo.CartVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +87,83 @@ public class CartServiceImpl implements ICartService {
     @Override
     public List<CartVO> getVOByUid(Integer uid) {
         return cartMapper.findVOByUid(uid);
+    }
+
+    @Override
+    public Integer addNum(Integer cid, Integer uid, String username) {
+        // 调用findByCid(cid)根据参数cid查询购物车数据
+        // 判断查询结果是否为null
+        // 是：抛出CartNotFoundException
+
+        // 判断查询结果中的uid与参数uid是否不一致
+        // 是：抛出AccessDeniedException
+
+        // 可选：检查商品的数量是否大于多少(适用于增加数量)或小于多少(适用于减少数量)
+        // 根据查询结果中的原数量增加1得到新的数量num
+
+        // 创建当前时间对象，作为modifiedTime
+        // 调用updateNumByCid(cid, num, modifiedUser, modifiedTime)执行修改数量
+
+        // 调用findByCid(cid)根据参数cid查询购物车数据
+        Cart result = cartMapper.findByCid(cid);
+        // 判断查询结果是否为null
+        if (result == null) {
+            // 是：抛出CartNotFoundException
+            throw new CartNotFoundException("尝试访问的购物车数据不存在");
+        }
+
+        // 判断查询结果中的uid与参数uid是否不一致
+        if (!result.getUid().equals(uid)) {
+            // 是：抛出AccessDeniedException
+            throw new AccessDeniedException("非法访问");
+        }
+
+        // 可选：检查商品的数量是否大于多少(适用于增加数量)或小于多少(适用于减少数量)
+        // 根据查询结果中的原数量增加1得到新的数量num
+        Integer num = result.getNum() + 1;
+
+        // 创建当前时间对象，作为modifiedTime
+        Date now = new Date();
+        // 调用updateNumByCid(cid, num, modifiedUser, modifiedTime)执行修改数量
+        Integer rows = cartMapper.updateNumByCid(cid, num, username, now);
+        if (rows != 1) {
+            throw new InsertException("修改商品数量时出现未知错误，请联系系统管理员");
+        }
+
+        // 返回新的数量
+        return num;
+    }
+
+    @Override
+    public Integer reduceNum(Integer cid, Integer uid, String username) {
+        // 调用findByCid(cid)根据参数cid查询购物车数据
+        Cart result = cartMapper.findByCid(cid);
+        // 判断查询结果是否为null
+        if (result == null) {
+            // 是：抛出CartNotFoundException
+            throw new CartNotFoundException("尝试访问的购物车数据不存在");
+        }
+
+        // 判断查询结果中的uid与参数uid是否不一致
+        if (!result.getUid().equals(uid)) {
+            // 是：抛出AccessDeniedException
+            throw new AccessDeniedException("非法访问");
+        }
+
+        // 可选：检查商品的数量是否大于多少(适用于增加数量)或小于多少(适用于减少数量)
+        // 根据查询结果中的原数量增加1得到新的数量num
+        Integer num = result.getNum();
+        if (result.getNum() > 0) {
+            num = result.getNum() - 1;
+            // 创建当前时间对象，作为modifiedTime
+            Date now = new Date();
+            // 调用updateNumByCid(cid, num, modifiedUser, modifiedTime)执行修改数量
+            Integer rows = cartMapper.updateNumByCid(cid, num, username, now);
+            if (rows != 1) {
+                throw new InsertException("修改商品数量时出现未知错误，请联系系统管理员");
+            }
+        }
+        // 返回新的数量
+        return num;
     }
 }

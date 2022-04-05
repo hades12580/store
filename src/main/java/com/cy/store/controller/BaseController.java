@@ -64,6 +64,9 @@ public class BaseController {
         } else if (e instanceof ProductNotFoundException) {
             result.setState(4006);
             result.setMessage("商品数据不存在的异常");
+        } else if (e instanceof CartNotFoundException) {
+            result.setState(4007);
+            result.setMessage("购物车数据不存在的异常");
         } else if (e instanceof InsertException) {
             result.setState(5000);
             result.setMessage("插入数据时产生未知的异常");
