@@ -1276,6 +1276,7 @@ $("#btn-add-to-cart").click(function() {
 > }
 > ```
 * 完成后启动项目，先登录再访问http://localhost:8080/web/index.html页面进行测试。
+
 ## 显示购物车列表
 ### 1 购物车-显示列表-持久层
 #### 1.1 规划需要执行的SQL语句
@@ -1300,6 +1301,7 @@ ORDER BY
 ```
 #### 1.2 接口与抽象方法
 * 由于涉及多表关联查询，必然没有哪个实体类可以封装此次的查询结果，因此需要创建VO类。创建com.cy.store.vo.CartVO类。
+* VO:Value Object-值对象，当进行select查询时，查询的结果属于多张表中的内容，结果集不能直接使用pojo实体类来接收，pojo实体类不能包含多表查询的结果。解决方式是重新构建一个新的对象，用于存储查询出来的结果集对应的映射，把这种对象称为值对象。
 ```java
 package com.cy.store.vo;
 import java.io.Serializable;

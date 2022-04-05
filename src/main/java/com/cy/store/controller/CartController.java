@@ -2,11 +2,14 @@ package com.cy.store.controller;
 
 import com.cy.store.service.ICartService;
 import com.cy.store.util.JsonResult;
+import com.cy.store.vo.CartVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author XuBowen
@@ -31,5 +34,15 @@ public class CartController extends BaseController {
         cartService.addToCart(uid, pid, amount, username);
         // 返回成功
         return new JsonResult<Void>(OK);
+    }
+
+    @GetMapping({"", "/"})
+    public JsonResult<List<CartVO>> getVOByUid(HttpSession session) {
+        // 从Session中获取uid
+        Integer uid = getUidFromSession(session);
+        // 调用业务对象执行查询数据
+        List<CartVO> data = cartService.getVOByUid(uid);
+        // 返回成功与数据
+        return new JsonResult<List<CartVO>>(OK, data);
     }
 }
