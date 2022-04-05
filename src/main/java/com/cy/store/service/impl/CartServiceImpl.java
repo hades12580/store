@@ -7,6 +7,7 @@ import com.cy.store.service.ICartService;
 import com.cy.store.service.IProductService;
 import com.cy.store.service.ex.AccessDeniedException;
 import com.cy.store.service.ex.CartNotFoundException;
+import com.cy.store.service.ex.DeleteException;
 import com.cy.store.service.ex.InsertException;
 import com.cy.store.vo.CartVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +154,7 @@ public class CartServiceImpl implements ICartService {
         // 可选：检查商品的数量是否大于多少(适用于增加数量)或小于多少(适用于减少数量)
         // 根据查询结果中的原数量增加1得到新的数量num
         Integer num = result.getNum();
-        if (result.getNum() > 0) {
+        if (result.getNum() > 1) {
             num = result.getNum() - 1;
             // 创建当前时间对象，作为modifiedTime
             Date now = new Date();
@@ -162,8 +163,30 @@ public class CartServiceImpl implements ICartService {
             if (rows != 1) {
                 throw new InsertException("修改商品数量时出现未知错误，请联系系统管理员");
             }
+        } else {
+            Integer rows = cartMapper.deleteByCid(cid);
+            if (rows != 1) {
+                throw new InsertException("修改商品数量时出现未知错误，请联系系统管理员");
+            }
         }
         // 返回新的数量
         return num;
+    }
+
+    @Override
+    public void delete(Integer cid, Integer uid, String username) {
+        Cart result = cartMapper.findByCid(cid);
+        if (result == null) {
+            throw new CartNotFoundException("尝试访问的购物车数据不存在");
+        }
+
+        if (!result.getUid().equals(uid)) {
+            throw new AccessDeniedException("非法访问");
+        }
+
+        Integer rows = cartMapper.deleteByCid(cid);
+        if (rows != 1) {
+            throw new DeleteException("删除数据产生未知的异常");
+        }
     }
 }

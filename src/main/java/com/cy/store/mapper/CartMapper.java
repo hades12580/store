@@ -61,4 +61,11 @@ public interface CartMapper {
      * @return 匹配的购物车数据详情，如果没有匹配的数据则返回null
      */
     Cart findByCid(Integer cid);
+
+    /**
+     * 根据购物车id删除购物车数据
+     * @param cid 购物车id
+     * @return 受影响的行数
+     */
+    Integer deleteByCid(Integer cid);
 }

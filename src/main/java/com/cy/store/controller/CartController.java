@@ -68,4 +68,10 @@ public class CartController extends BaseController {
         // 返回成功
         return new JsonResult<>(OK, data);
     }
+
+    @RequestMapping("{cid}/delete")
+    public JsonResult<Void> delete(@PathVariable("cid") Integer cid, HttpSession session) {
+        cartService.delete(cid, getUidFromSession(session), getUsernameFromSession(session));
+        return new JsonResult<>(OK);
+    }
 }

@@ -44,4 +44,12 @@ public interface ICartService {
      * @return 增加成功后新的数量
      */
     Integer reduceNum(Integer cid, Integer uid, String username);
+
+    /**
+     * 删除用户选中的购物车数据
+     * @param cid 购物车id
+     * @param uid 用户id
+     * @param username 用户名
+     */
+    void delete(Integer cid, Integer uid, String username);
 }

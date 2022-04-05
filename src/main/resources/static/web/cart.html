@@ -302,6 +302,9 @@
 					success: function(json) {
 						if (json.state = 200) {
 							$("#num-" + cid).val(json.data);
+							if (json.data == 1) {
+								showCartList();
+							}
 							// 获取某个标签内部的内容
 							let price = $("#price-" + cid).html();
 							let totalPrice = price * json.data;
@@ -312,6 +315,25 @@
 					},
 					error: function (xhr) {
 						alert("减少购物车商品数量产生未知的异常！" + xhr.status);
+					}
+				});
+			}
+
+			function deleteByCid(cid) {
+				$.ajax({
+					url: "/carts/" + cid + "/delete",
+					type: "POST",
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							showCartList();
+							alert("删除商品成功")
+						} else {
+							alert("删除商品失败");
+						}
+					},
+					error: function (xhr) {
+						alert("删除商品时产生未知的异常" + xhr.message);
 					}
 				});
 			}
@@ -339,7 +361,7 @@
 									+ '</td>'
 									+ '<td>¥<span id="total-price-#{cid}">#{totalPrice}</span></td>'
 									+ '<td>'
-									+ 	'<input type="button" onclick="delCartItem(this)" class="cart-del btn btn-default btn-xs" value="删除" />'
+									+ 	'<input type="button" onclick="deleteByCid(#{cid})" class="cart-del btn btn-default btn-xs" value="删除" />'
 									+ '</td>'
 									+ '</tr>';
 							tr = tr.replace(/#{cid}/g, list[i].cid);
