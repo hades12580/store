@@ -2412,7 +2412,7 @@ public class OrderController extends BaseController {
     }
 }
 ```
-* 完成后启动项目，先登录再访问http://localhost:8080/orders/create?aid=21&cids=4&cids=5&cids=6&cids=7进行测试。
+* 完成后启动项目，先登录再访问http://localhost:8080/orders/create?aid=19&cids=4&cids=6&cids=15&cids=17进行测试。
 ### 6 订单-前端页面
 * 在orderConfirm.xml页面中的body标签内的script标签内添加“在线支付”按钮的点击时间。
 ```javascript
