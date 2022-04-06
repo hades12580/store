@@ -68,4 +68,11 @@ public interface CartMapper {
      * @return 受影响的行数
      */
     Integer deleteByCid(Integer cid);
+
+    /**
+     * 根据若干个购物车数据id查询详情的列表
+     * @param cids 若干个购物车数据id
+     * @return 匹配的购物车数据详情的列表
+     */
+    List<CartVO> findVOByCids(Integer[] cids);
 }

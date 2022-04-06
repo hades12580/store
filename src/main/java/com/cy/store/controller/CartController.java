@@ -74,4 +74,12 @@ public class CartController extends BaseController {
         cartService.delete(cid, getUidFromSession(session), getUsernameFromSession(session));
         return new JsonResult<>(OK);
     }
+
+    @GetMapping("list")
+    public JsonResult<List<CartVO>> getVOByCids(Integer[] cids, HttpSession session) {
+        // 调用业务对象执行查询数据
+        List<CartVO> data = cartService.getVOByCids(getUidFromSession(session), cids);
+        // 返回成功与数据
+        return new JsonResult<>(OK, data);
+    }
 }

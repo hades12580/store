@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -188,5 +189,19 @@ public class CartServiceImpl implements ICartService {
         if (rows != 1) {
             throw new DeleteException("删除数据产生未知的异常");
         }
+    }
+
+    @Override
+    public List<CartVO> getVOByCids(Integer uid, Integer[] cids) {
+        List<CartVO> list = cartMapper.findVOByCids(cids);
+        /**
+         for (CartVO cart : list) {
+            if (!cart.getUid().equals(uid)) {
+                list.remove(cart);
+            }
+         }
+         */
+        list.removeIf(cart -> !cart.getUid().equals(uid));
+        return list;
     }
 }

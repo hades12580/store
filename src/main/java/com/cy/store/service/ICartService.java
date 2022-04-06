@@ -52,4 +52,12 @@ public interface ICartService {
      * @param username 用户名
      */
     void delete(Integer cid, Integer uid, String username);
+
+    /**
+     * 根据若干个购物车数据id查询详情的列表
+     * @param uid 当前登录的用户的id
+     * @param cids 若干个购物车数据id
+     * @return 匹配的购物车数据详情的列表
+     */
+    List<CartVO> getVOByCids(Integer uid, Integer[] cids);
 }
